@@ -1,0 +1,30 @@
+﻿@model WebBlog.Models.User
+
+@{
+    ViewData["Title"] = "UserPage";
+}
+
+<h1>User Dashboard</h1>
+
+<h2>Profile Information</h2>
+<p><strong>First Name:</strong> @Model.FirstName</p>
+<p><strong>Last Name:</strong> @Model.LastName</p>
+<p><strong>Email:</strong> @Model.Email</p>
+
+<h2>Blog Posts</h2>
+@if (Model.BlogPosts.Any())
+{
+    
+        @foreach (var post in Model.BlogPosts)
+        {
+            <ul>
+            <li>@post.Title</li>
+            </ul>
+            <p>@post.Content</p>
+        }
+}
+else
+{
+    <p>No blog posts found.</p>
+}
+
