@@ -1,0 +1,41 @@
+﻿@model List<WebBlog.Models.Comment>
+@{
+    ViewData["Title"] = "UserComments";
+}
+
+<h1>UserComments</h1>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Comment</th>
+                <th>Posted By</th>
+                <th>Posted At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in Model)
+            {
+                <tr>
+                    <td>@comment.Content</td>
+                    <td>@comment.User.FirstName</td>
+                    <td>@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</td>
+                    <td>
+                        <form asp-action="DeleteComment" asp-controller="Admin" method="post">
+                            <input type="hidden" name="commentId" value="@comment.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No comments found.</p>
+}
+

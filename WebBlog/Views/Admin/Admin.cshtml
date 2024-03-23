@@ -28,6 +28,7 @@
                 <td>
                     <a href="@Url.Action("EditUser", "Admin", new { id = user.Id })">Edit User</a> |
                     <a href="@Url.Action("AddPost", "Admin", new { userId = user.Id })">Add Post</a> |
+                    <a href="@Url.Action("UserComments", "Admin", new { userId = user.Id })">View Comments</a> |
                     @foreach (var post in user.BlogPosts)
                     {
                         <a href="@Url.Action("EditPost", "Admin", new { userId = user.Id, id = post.Id })">Edit Post</a>

@@ -108,6 +108,22 @@ namespace WebBlog.Controllers
             _db.SaveChanges();
             return RedirectToAction("Admin");
         }
+        public IActionResult UserComments(int userId)
+        {
+            var userComments = _db.Comments
+                                  .Include(c => c.User) 
+                                  .Where(c => c.UserId == userId)
+                                  .ToList();
+            return View(userComments);
+        }
+
+        public IActionResult DeleteComment(int commentId)
+        {
+            var comment = _db.Comments.Find(commentId);
+            _db.Comments.Remove(comment);
+            _db.SaveChanges();
+            return RedirectToAction("Admin");
+        }
     }
 }
     

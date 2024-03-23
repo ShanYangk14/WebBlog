@@ -14,17 +14,44 @@
 <h2>Blog Posts</h2>
 @if (Model.BlogPosts.Any())
 {
-    
-        @foreach (var post in Model.BlogPosts)
+    foreach (var post in Model.BlogPosts)
+    {
+        <h3>@post.Title</h3>
+        <p>@post.Content</p>
+        <p>Last Edit: @post.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</p>
+
+        <h4>Comments:</h4>
+        @foreach (var comment in post.Comments)
         {
-            <ul>
-            <li>@post.Title</li>
-            </ul>
-            <p>@post.Content</p>
+            <div>
+                <p>@comment.Content</p>
+                <p>Posted by: @comment.User.FirstName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
+                @if (comment.UserId == Model.Id) 
+                {
+                    <form asp-action="DeleteComment" asp-controller="User" method="post">
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                }
+            </div>
         }
+        @foreach (var comment in post.Comments)
+        {
+            <p>@comment.Content</p>
+            <p>Posted by: @comment.User.FirstName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
+        }
+
+        <form asp-action="AddComment" asp-controller="User" method="post">
+            <input type="hidden" name="postId" value="@post.Id" />
+            <div class="form-group">
+                <label for="commentContent">Add a comment:</label>
+                <textarea class="form-control" id="commentContent" name="content" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    }
 }
 else
 {
     <p>No blog posts found.</p>
 }
-
