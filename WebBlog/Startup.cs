@@ -10,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
 using WebBlog.Models;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace WebBlog
 {
@@ -76,10 +78,10 @@ namespace WebBlog
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
-
-            app.UseRouting();
+            
             app.UseSession();
-
+            app.UseRouting();
+            
             app.UseAuthentication(); // Add authentication middleware
             app.UseAuthorization();
 

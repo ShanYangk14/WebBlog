@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <Content Remove="Assets\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <None Remove="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.1.34" />
       <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.1.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0" />
@@ -16,7 +23,7 @@
      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>

@@ -24,6 +24,16 @@ namespace WebBlog.Controllers
             var usersWithPosts = _db.Users.Include(u => u.BlogPosts).ToList();
             return View(usersWithPosts);
         }
+
+        public IActionResult AdminBlog()
+        {
+            var userEmail = User.Identity.Name;
+            var user = _db.Users
+                .Include(u => u.BlogPosts)
+                    .ThenInclude(p => p.Comments)
+                .FirstOrDefault(u => u.Email == userEmail);
+            return View(user);
+        }
        
         public IActionResult AddPost(int userId)
         {
