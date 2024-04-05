@@ -12,8 +12,14 @@
 }
 else
 {
-    <p>By: @ViewData["UserFirstName"] @ViewData["UserLastName"]</p>
-    <p>Email: @ViewData["UserEmail"]</p>
+    <div>
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Url.Content(Model.ImagePath)" alt="Post Image" />
+        }
+        <p>By: @ViewData["UserFirstName"] @ViewData["UserLastName"]</p>
+        <p>Email: @ViewData["UserEmail"]</p>
+    </div>
 }
 
 <p>@Model.Content</p>

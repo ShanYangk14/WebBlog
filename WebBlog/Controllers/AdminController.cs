@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Security.Claims;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace WebBlog.Controllers
 {
@@ -51,10 +53,25 @@ namespace WebBlog.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPost(BlogPost post)
+        [HttpPost]
+        public IActionResult AddPost(BlogPost post, IFormFile image)
         {
             if (ModelState.IsValid)
             {
+                if (image != null && image.Length > 0)
+                {
+                    var fileName = Path.GetFileName(image.FileName);
+                    var imagePath = "/images/" + fileName;
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+
+                    post.ImagePath = imagePath;
+                }
+
                 _db.BlogPosts.Add(post);
                 _db.SaveChanges();
                 return RedirectToAction("Admin");
@@ -73,10 +90,24 @@ namespace WebBlog.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditPost(BlogPost post)
+        public IActionResult EditPost(BlogPost post, IFormFile image)
         {
             if (ModelState.IsValid)
             {
+                if (image != null && image.Length > 0)
+                {
+                    var fileName = Path.GetFileName(image.FileName);
+                    var imagePath = "/images/" + fileName; 
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+
+                    post.ImagePath = imagePath;
+                }
+
                 _db.BlogPosts.Update(post);
                 _db.SaveChanges();
                 return RedirectToAction("Admin");

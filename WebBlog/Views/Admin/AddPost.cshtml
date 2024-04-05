@@ -8,7 +8,7 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <form method="post" asp-action="AddPost" asp-controller="Admin">
+    <form method="post" asp-action="AddPost" asp-controller="Admin" enctype="multipart/form-data">
         <input type="hidden" name="UserId" value="@ViewData["UserId"]" /> 
 
         <div class="form-group">
@@ -21,6 +21,11 @@
             <label asp-for="Content"></label>
             <textarea asp-for="Content" class="form-control" rows="6"></textarea>
             <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" />
         </div>
 
         <button type="submit" class="btn btn-primary">Save Post</button>

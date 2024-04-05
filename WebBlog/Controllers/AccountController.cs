@@ -47,8 +47,7 @@ namespace WebBlog.Controllers
         public async Task<ActionResult> RegisterAsync(User _user, bool isAdmin)
         {
             try
-            {
-                // Check if a user with the same email already exists
+            { 
                 var existingUser = await _userManager.FindByEmailAsync(_user.Email);
 
                 if (existingUser != null)
@@ -57,7 +56,6 @@ namespace WebBlog.Controllers
                     return View();
                 }
 
-                // Create a new User object with the provided details
                 var user = new User
                 {
                     FirstName = _user.FirstName,
@@ -72,22 +70,19 @@ namespace WebBlog.Controllers
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
 
-                // Save the user to the database
                 var result = await _userManager.CreateAsync(user);
 
                 if (result.Succeeded)
                 {
-                    // Assign roles based on the isAdmin parameter
                     if (isAdmin)
                     {
                         await _userManager.AddToRoleAsync(user, "Admin");
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, "AuthenticatedUser"); // Assign "AuthenticatedUser" role by default
+                        await _userManager.AddToRoleAsync(user, "AuthenticatedUser"); 
                     }
 
-                    // Redirect to appropriate action based on role
                     if (isAdmin)
                     {
                         return RedirectToAction("Admin", "Admin");
@@ -99,7 +94,6 @@ namespace WebBlog.Controllers
                 }
                 else
                 {
-                    // If registration fails, display appropriate error messages
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
@@ -152,7 +146,6 @@ namespace WebBlog.Controllers
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                    // Redirect to appropriate action based on role
                     if (claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin"))
                     {
                         return RedirectToAction("Admin", "Admin");

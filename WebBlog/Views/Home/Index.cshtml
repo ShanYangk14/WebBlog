@@ -6,13 +6,64 @@
     <title>Three.js Example</title>
     <style>
         body {
-            background-color: #bfe3dd;
-            color: #000;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: -1; /* Ensure the 3D model is behind other elements */
+        }
+
+        #info {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            z-index: 1; /* Ensure the info text is on top */
+        }
+
+        .welcome-section {
+            position: absolute;
+            top: 20%; /* Adjusted top position */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1; /* Ensure the welcome text is on top */
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #666;
         }
 
         a {
             color: #2983ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
+
+            a:hover {
+                color: #007bff;
+            }
     </style>
 </head>
 <body>
@@ -31,103 +82,103 @@
         <a href="https://artstation.com/glenatron" target="_blank" rel="noopener">Glen Fox</a>, CC Attribution.
     </div>
 
-	<script type="importmap">
-		{
-			"imports": {
-				"three": "../build/three.module.js",
-				"three/addons/": "./jsm/"
-			}
-		}
-	</script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../build/three.module.js",
+                "three/addons/": "./jsm/"
+            }
+        }
+    </script>
 
     <script type="module">
-		import * as THREE from 'three';
+        import * as THREE from 'three';
 
-		import Stats from 'three/addons/libs/stats.module.js';
+        import Stats from 'three/addons/libs/stats.module.js';
 
-		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-		import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-		import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-		import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-		let mixer;
+        let mixer;
 
-		const clock = new THREE.Clock();
-		const container = document.getElementById('container');
+        const clock = new THREE.Clock();
+        const container = document.getElementById('container');
 
-		const stats = new Stats();
-		container.appendChild(stats.dom);
+        const stats = new Stats();
+        container.appendChild(stats.dom);
 
-		const renderer = new THREE.WebGLRenderer({ antialias: true });
-		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		container.appendChild(renderer.domElement);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
 
-		const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
 
-		const scene = new THREE.Scene();
-		scene.background = new THREE.Color(0xbfe3dd);
-		scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xbfe3dd);
+        scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
-		const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
-		camera.position.set(5, 2, 8);
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
+        camera.position.set(5, 2, 8);
 
-		const controls = new OrbitControls(camera, renderer.domElement);
-		controls.target.set(0, 0.5, 0);
-		controls.update();
-		controls.enablePan = false;
-		controls.enableDamping = true;
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 0.5, 0);
+        controls.update();
+        controls.enablePan = false;
+        controls.enableDamping = true;
 
-		const dracoLoader = new DRACOLoader();
-		dracoLoader.setDecoderPath('jsm/libs/draco/gltf/');
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('jsm/libs/draco/gltf/');
 
-		const loader = new GLTFLoader();
-		loader.setDRACOLoader(dracoLoader);
-		loader.load('models/gltf/LittlestTokyo.glb', function (gltf) {
+        const loader = new GLTFLoader();
+        loader.setDRACOLoader(dracoLoader);
+        loader.load('models/gltf/LittlestTokyo.glb', function (gltf) {
 
-			const model = gltf.scene;
-			model.position.set(1, 1, 0);
-			model.scale.set(0.05,0.05,0.05);
-			scene.add(model);
+            const model = gltf.scene;
+            model.position.set(0, 0, 0); // Adjusted position
+            model.scale.set(0.02, 0.02, 0.02); // Adjusted scale
+            scene.add(model);
 
-			mixer = new THREE.AnimationMixer(model);
-			mixer.clipAction(gltf.animations[0]).play();
+            mixer = new THREE.AnimationMixer(model);
+            mixer.clipAction(gltf.animations[0]).play();
 
-			animate();
+            animate();
 
-		}, undefined, function (e) {
+        }, undefined, function (e) {
 
-			console.error(e);
+            console.error(e);
 
-		});
-
-
-		window.onresize = function () {
-
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-
-			renderer.setSize(window.innerWidth, window.innerHeight);
-
-		};
+        });
 
 
-		function animate() {
+        window.onresize = function () {
 
-			requestAnimationFrame(animate);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
 
-			const delta = clock.getDelta();
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-			mixer.update(delta);
+        };
 
-			controls.update();
 
-			stats.update();
+        function animate() {
 
-			renderer.render(scene, camera);
+            requestAnimationFrame(animate);
 
-		}
+            const delta = clock.getDelta();
+
+            mixer.update(delta);
+
+            controls.update();
+
+            stats.update();
+
+            renderer.render(scene, camera);
+
+        }
     </script>
 </body>
 </html>

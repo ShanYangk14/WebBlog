@@ -2,6 +2,30 @@
 @{
     ViewData["Title"] = "AdminBlog";
 }
+<style>
+    .profile-information {
+        background-color: #f9f9f9;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .blog-post {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .post-image img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .comment {
+        margin-top: 15px;
+    }
+</style>
 <h1>Admin Dashboard</h1>
 
 <h2>Profile Information</h2>
@@ -14,40 +38,44 @@
 {
     foreach (var post in Model.BlogPosts)
     {
-        <h3>@post.Title</h3>
-        <p>@post.Content</p>
-        <p>Last Edit: @post.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</p>
+        <div>
+            @if (!string.IsNullOrEmpty(post.ImagePath))
+            {
+                <img src="@Url.Content(post.ImagePath)" alt="Post Image" />
+            }
 
-        <h4>Comments:</h4>
-        @foreach (var comment in post.Comments)
-        {
-            <div>
-                <p>@comment.Content</p>
-                <p>Posted by: @comment.User.FirstName @comment.User.LastName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
-                @if (comment.UserId == Model.Id)
-                {
-                    <form asp-action="DeleteComment" asp-controller="User" method="post">
-                        <input type="hidden" name="commentId" value="@comment.Id" />
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                }
-            </div>
-        }
+            <h3>@post.Title</h3>
+            <p>@post.Content</p>
+            <p>Last Edit: @post.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</p>
 
-        <form asp-action="AddComment" asp-controller="User" method="post">
-            <input type="hidden" name="postId" value="@post.Id" />
-            <div class="form-group">
-                <label for="commentContent">Add a comment:</label>
-                <textarea class="form-control" id="commentContent" name="content" rows="3"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+            <h4>Comments:</h4>
+            @foreach (var comment in post.Comments)
+            {
+                <div>
+                    <p>@comment.Content</p>
+                    <p>Posted by: @comment.User.FirstName @comment.User.LastName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
+                    @if (comment.UserId == Model.Id)
+                    {
+                        <form asp-action="DeleteComment" asp-controller="User" method="post">
+                            <input type="hidden" name="commentId" value="@comment.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    }
+                </div>
+            }
+
+            <form asp-action="AddComment" asp-controller="User" method="post">
+                <input type="hidden" name="postId" value="@post.Id" />
+                <div class="form-group">
+                    <label for="commentContent">Add a comment:</label>
+                    <textarea class="form-control" id="commentContent" name="content" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     }
 }
 else
 {
     <p>No blog posts found.</p>
 }
-
-
-

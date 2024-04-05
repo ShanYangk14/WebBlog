@@ -23,6 +23,7 @@ namespace WebBlog.Models
         {
             CreatedAt = DateTime.Now;
         }
+        public string ImagePath { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
         public ICollection<Comment> Comments { get; set; }
