@@ -1,7 +1,8 @@
 ﻿@model WebBlog.Models.User
 @{
-    ViewData["Title"] = "AdminBlog";
+    ViewData["Title"] = "Admin Dashboard";
 }
+
 <style>
     .profile-information {
         background-color: #f9f9f9;
@@ -15,63 +16,78 @@
         margin-bottom: 20px;
     }
 
+    .post-image {
+        text-align: center;
+    }
+
     .post-image img {
-        max-width: 100%;
-        height: auto;
-        display: block;
+        max-width: 100%; 
+        max-height: 300px; 
+        display: inline-block; 
         margin-bottom: 10px;
+    }
+
+    .post-content {
+        padding: 10px;
     }
 
     .comment {
         margin-top: 15px;
     }
 </style>
-<h1>Admin Dashboard</h1>
 
-<h2>Profile Information</h2>
-<p><strong>First Name:</strong> @Model.FirstName</p>
-<p><strong>Last Name:</strong> @Model.LastName</p>
-<p><strong>Email:</strong> @Model.Email</p>
+<h1>User Dashboard</h1>
+
+<div class="profile-information">
+    <h2>Profile Information</h2>
+    <p><strong>First Name:</strong> @Model.FirstName</p>
+    <p><strong>Last Name:</strong> @Model.LastName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+</div>
 
 <h2>Blog Posts</h2>
 @if (Model.BlogPosts.Any())
 {
     foreach (var post in Model.BlogPosts)
     {
-        <div>
+        <div class="blog-post">
             @if (!string.IsNullOrEmpty(post.ImagePath))
             {
-                <img src="@Url.Content(post.ImagePath)" alt="Post Image" />
-            }
-
-            <h3>@post.Title</h3>
-            <p>@post.Content</p>
-            <p>Last Edit: @post.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</p>
-
-            <h4>Comments:</h4>
-            @foreach (var comment in post.Comments)
-            {
-                <div>
-                    <p>@comment.Content</p>
-                    <p>Posted by: @comment.User.FirstName @comment.User.LastName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
-                    @if (comment.UserId == Model.Id)
-                    {
-                        <form asp-action="DeleteComment" asp-controller="User" method="post">
-                            <input type="hidden" name="commentId" value="@comment.Id" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    }
+                <div class="post-image">
+                    <img src="@Url.Content(post.ImagePath)" alt="Post Image" />
                 </div>
             }
 
-            <form asp-action="AddComment" asp-controller="User" method="post">
-                <input type="hidden" name="postId" value="@post.Id" />
-                <div class="form-group">
-                    <label for="commentContent">Add a comment:</label>
-                    <textarea class="form-control" id="commentContent" name="content" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            <div class="post-content">
+                <h3>@post.Title</h3>
+                <p>@post.Content</p>
+                <p>Last Edit: @post.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</p>
+
+                <h4>Comments:</h4>
+                @foreach (var comment in post.Comments)
+                {
+                    <div class="comment">
+                        <p>@comment.Content</p>
+                        <p>Posted by: @comment.User.FirstName @comment.User.LastName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
+                        @if (comment.UserId == Model.Id)
+                        {
+                            <form asp-action="DeleteComment" asp-controller="User" method="post">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        }
+                    </div>
+                }
+
+                <form asp-action="AddComment" asp-controller="User" method="post">
+                    <input type="hidden" name="postId" value="@post.Id" />
+                    <div class="form-group">
+                        <label for="commentContent">Add a comment:</label>
+                        <textarea class="form-control" id="commentContent" name="content" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
         </div>
     }
 }
