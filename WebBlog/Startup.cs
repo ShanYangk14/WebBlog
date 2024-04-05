@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using WebBlog.Models;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
-using Serilog;
 
 namespace WebBlog
 {
@@ -25,22 +26,19 @@ namespace WebBlog
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Configure DbContext to use SQL Server
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole<int>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedAccount = false; // Change as needed
+                options.SignIn.RequireConfirmedAccount = false; 
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            // Define custom policies for admin and authenticated user
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
@@ -49,9 +47,8 @@ namespace WebBlog
 
             services.AddSession(options =>
             {
-       
                 options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true; 
+                options.Cookie.IsEssential = true;
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -67,7 +64,6 @@ namespace WebBlog
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole<int>> roleManager)
         {
             if (env.IsDevelopment())
@@ -79,15 +75,30 @@ namespace WebBlog
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
             app.UseStaticFiles();
-            
+
+            // Configure content type provider for GLB and GLTF files
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot", "models", "gltf")),
+                RequestPath = "/models/gltf",
+                ContentTypeProvider = new FileExtensionContentTypeProvider
+                {
+                    Mappings =
+                    {
+                        [".glb"] = "model/gltf+binary",
+                        [".gltf"] = "model/gltf+json"
+                    }
+                }
+            });
+
             app.UseSession();
             app.UseRouting();
-            
-            app.UseAuthentication(); // Add authentication middleware
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            // Create roles during application startup
             CreateRoles(roleManager).Wait();
 
             app.UseEndpoints(endpoints =>
@@ -95,7 +106,6 @@ namespace WebBlog
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
                 endpoints.MapControllerRoute(
                     name: "editPost",
@@ -105,17 +115,14 @@ namespace WebBlog
             });
         }
 
-        // Method to create roles
         private async Task CreateRoles(RoleManager<IdentityRole<int>> roleManager)
         {
-            // Ensure that "Admin" role exists
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 var adminRole = new IdentityRole<int>("Admin");
                 await roleManager.CreateAsync(adminRole);
             }
 
-            // Ensure that "AuthenticatedUser" role exists
             if (!await roleManager.RoleExistsAsync("AuthenticatedUser"))
             {
                 var authenticatedUserRole = new IdentityRole<int>("AuthenticatedUser");
