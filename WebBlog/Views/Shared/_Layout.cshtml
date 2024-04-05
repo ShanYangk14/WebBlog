@@ -18,7 +18,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+                        @if (!User.Identity.IsAuthenticated || (!User.IsInRole("Admin") && !User.IsInRole("AuthenticatedUser")))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -36,6 +36,18 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminBlog">My Blog</a>
+                                </li>
+                            }
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            if (User.IsInRole("AuthenticatedUser"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="BlogInspect">Other Blog</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserPage">My Blog</a>
                                 </li>
                             }
                         }

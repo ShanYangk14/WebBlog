@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using WebBlog.Models;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Serilog;
 
 namespace WebBlog
 {
@@ -72,6 +73,7 @@ namespace WebBlog
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSerilogRequestLogging();
             }
             else
             {

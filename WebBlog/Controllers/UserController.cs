@@ -23,7 +23,8 @@ namespace WebBlog.Controllers
             var userEmail = User.Identity.Name;
             var user = _db.Users
                 .Include(u => u.BlogPosts) 
-                    .ThenInclude(p => p.Comments) 
+                    .ThenInclude(p => p.Comments)
+                     .ThenInclude(c => c.User)
                 .FirstOrDefault(u => u.Email == userEmail);
             return View(user);
         }
@@ -47,7 +48,8 @@ namespace WebBlog.Controllers
             {
                 Content = content,
                 CreatedAt = DateTime.Now,
-                UserId = user.Id
+                UserId = user.Id,
+                User = user
             };
 
             post.Comments.Add(comment);
@@ -55,19 +57,27 @@ namespace WebBlog.Controllers
 
             return RedirectToAction("UserPage", "User");
         }
+
         [HttpPost]
         public IActionResult DeleteComment(int commentId)
         {
-            var comment = _db.Comments.FirstOrDefault(c => c.Id == commentId);
+            var comment = _db.Comments
+                .Include(c => c.User) 
+                .FirstOrDefault(c => c.Id == commentId);
+
             if (comment == null)
             {
                 return NotFound();
             }
 
-            var user = _db.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
-            if (user == null || comment.UserId != user.Id)
+            if (!User.Identity.IsAuthenticated)
             {
-                return Forbid(); 
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (User.Identity.Name != comment.User.Email)
+            {
+                return Forbid();
             }
 
             _db.Comments.Remove(comment);
@@ -76,6 +86,40 @@ namespace WebBlog.Controllers
             return RedirectToAction("UserPage", "User");
         }
 
+
+        public IActionResult BlogInspect()
+        {
+            var otherBlog = _db.Users.Include(u => u.BlogPosts).ToList();
+            return View(otherBlog);
+        }
+        public IActionResult ViewBlogPost(int postId)
+        {
+            var post = _db.BlogPosts
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
+                .FirstOrDefault(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            var user = _db.Users.FirstOrDefault(u => u.Id == post.UserId);
+
+            if (user == null)
+            {
+               
+                ViewData["UserNotFound"] = true;
+            }
+            else
+            {
+                ViewData["UserFirstName"] = user.FirstName;
+                ViewData["UserLastName"] = user.LastName;
+                ViewData["UserEmail"] = user.Email;
+            }
+
+            return View(post);
+        }
 
     }
 }

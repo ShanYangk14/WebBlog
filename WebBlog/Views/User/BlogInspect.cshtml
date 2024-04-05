@@ -1,0 +1,20 @@
+﻿@model IEnumerable<WebBlog.Models.User>
+
+@{
+    ViewData["Title"] = "BlogInspect";
+}
+
+<h1>Global Blog Posts</h1>
+
+@foreach (var user in Model)
+{
+    <h2>@user.FirstName @user.LastName's Blog</h2>
+    <ul>
+        @foreach (var post in user.BlogPosts)
+        {
+            <li>
+                <a href="@Url.Action("ViewBlogPost", "User", new { postId = post.Id })">@post.Title</a>
+            </li>
+        }
+    </ul>
+}

@@ -25,7 +25,7 @@
         {
             <div>
                 <p>@comment.Content</p>
-                <p>Posted by: @comment.User.FirstName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
+                <p>Posted by: @comment.User.FirstName @comment.User.LastName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
                 @if (comment.UserId == Model.Id) 
                 {
                     <form asp-action="DeleteComment" asp-controller="User" method="post">
@@ -35,12 +35,6 @@
                 }
             </div>
         }
-        @foreach (var comment in post.Comments)
-        {
-            <p>@comment.Content</p>
-            <p>Posted by: @comment.User.FirstName (@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt"))</p>
-        }
-
         <form asp-action="AddComment" asp-controller="User" method="post">
             <input type="hidden" name="postId" value="@post.Id" />
             <div class="form-group">

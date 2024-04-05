@@ -1,0 +1,55 @@
+﻿@model WebBlog.Models.BlogPost
+
+@{
+    ViewData["Title"] = "View Blog Post";
+}
+
+<h1>@Model.Title</h1>
+
+@if (ViewData.ContainsKey("UserNotFound") && (bool)ViewData["UserNotFound"])
+{
+    <p>User information not available.</p>
+}
+else
+{
+    <p>By: @ViewData["UserFirstName"] @ViewData["UserLastName"]</p>
+    <p>Email: @ViewData["UserEmail"]</p>
+}
+
+<p>@Model.Content</p>
+
+<h2>Comments</h2>
+@if (Model.Comments.Any())
+{
+    <ul>
+        @foreach (var comment in Model.Comments)
+        {
+            <li>
+                @comment.Content - @comment.CreatedAt
+                @if (comment.User != null && User.Identity.IsAuthenticated && User.Identity.Name == comment.User.Email)
+                {
+                    <form asp-action="DeleteComment" method="post">
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No comments yet.</p>
+}
+
+<hr />
+
+<h3>Add Comment</h3>
+<form asp-action="AddComment" method="post">
+    <input type="hidden" name="postId" value="@Model.Id" />
+    <div class="form-group">
+        <label for="content">Content:</label>
+        <textarea class="form-control" id="content" name="content" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

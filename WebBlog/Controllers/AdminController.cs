@@ -31,10 +31,11 @@ namespace WebBlog.Controllers
             var user = _db.Users
                 .Include(u => u.BlogPosts)
                     .ThenInclude(p => p.Comments)
+                        .ThenInclude(c => c.User) 
                 .FirstOrDefault(u => u.Email == userEmail);
             return View(user);
         }
-       
+
         public IActionResult AddPost(int userId)
         {
             var user = _db.Users.FirstOrDefault(u => u.Id == userId);
@@ -48,7 +49,6 @@ namespace WebBlog.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
-
 
         [HttpPost]
         public IActionResult AddPost(BlogPost post)
@@ -91,7 +91,6 @@ namespace WebBlog.Controllers
             _db.SaveChanges();
             return RedirectToAction("Admin");
         }
-
 
         public IActionResult EditUser(int id)
         {
