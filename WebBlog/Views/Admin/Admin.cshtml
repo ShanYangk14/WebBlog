@@ -103,8 +103,11 @@
                     @foreach (var post in user.BlogPosts)
                     {
                         <a href="@Url.Action("EditPost", "Admin", new { userId = user.Id, id = post.Id })">Edit Post</a>
-                    } |
-                    <a href="@Url.Action("DeleteUser", "Admin", new { id = user.Id })">Delete</a>
+                    }|
+                    @if (!User.IsInRole("Admin") || (User.IsInRole("Admin") && User.Identity.Name != user.Email))
+                    {
+                        <a href="@Url.Action("DeleteUser", "Admin", new { id = user.Id })">Delete</a>
+                    }
                 </td>
             </tr>
         }
