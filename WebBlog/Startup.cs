@@ -78,7 +78,6 @@ namespace WebBlog
 
             app.UseStaticFiles();
 
-            // Configure content type provider for GLB and GLTF files
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot", "models", "gltf")),

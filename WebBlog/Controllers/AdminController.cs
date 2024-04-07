@@ -53,7 +53,6 @@ namespace WebBlog.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public IActionResult AddPost(BlogPost post, IFormFile image)
         {
             if (ModelState.IsValid)

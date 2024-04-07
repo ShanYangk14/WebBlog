@@ -4,9 +4,80 @@
     ViewData["Title"] = "Admin";
 }
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    #container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 38vh;
+        height: 38vh;
+        margin: auto;
+    }
+
+    canvas {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
+
+        .table th,
+        .table td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .table td {
+            background-color: #ffffff;
+        }
+
+            .table td a {
+                color: #007bff;
+                text-decoration: none;
+                margin-right: 5px;
+            }
+
+                .table td a:hover {
+                    text-decoration: underline;
+                }
+</style>
+
 <h1>Admin Dashboard</h1>
 
-<h2>Manage Blog Posts</h2>
+<div id="container">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../build/three.module.js",
+                "three/addons/": "./jsm/"
+            }
+        }
+    </script>
+</div>
+
+<h2 style="text-align: center;">Manage Blog Posts</h2>
 <table class="table">
     <thead>
         <tr>
@@ -32,10 +103,86 @@
                     @foreach (var post in user.BlogPosts)
                     {
                         <a href="@Url.Action("EditPost", "Admin", new { userId = user.Id, id = post.Id })">Edit Post</a>
-                    }|
+                    } |
                     <a href="@Url.Action("DeleteUser", "Admin", new { id = user.Id })">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from '/jsm/controls/OrbitControls.js';
+    import { RoomEnvironment } from '/jsm/environments/RoomEnvironment.js';
+    import { GLTFLoader } from '/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from '/jsm/loaders/DRACOLoader.js';
+
+    let mixer;
+    const clock = new THREE.Clock();
+    const container = document.getElementById('container');
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+    const camera = new THREE.PerspectiveCamera(40, 1, 1, 100);
+    camera.position.set(5, 1, 8);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableRotate = false;
+    controls.enableZoom = false;
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('jsm/libs/draco/gltf/');
+
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+    loader.load('/models/gltf/office_computer.glb', function (gltf) {
+        const model = gltf.scene;
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+        model.position.set(0, 0, 0);
+        model.scale.set(0.025, 0.025, 0.025);
+        scene.add(model);
+
+        if (gltf.animations && gltf.animations.length > 0) {
+            mixer = new THREE.AnimationMixer(model);
+            mixer.clipAction(gltf.animations[0]).play();
+        } else {
+            console.warn('No animations found in the loaded GLTF file.');
+        }
+
+        animate();
+    }, undefined, function (e) {
+        console.error(e);
+    });
+
+    window.onresize = function () {
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        renderer.render(scene, camera);
+    };
+
+    window.onresize();
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+        if (mixer) mixer.update(delta);
+
+        scene.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+    }
+</script>
+
