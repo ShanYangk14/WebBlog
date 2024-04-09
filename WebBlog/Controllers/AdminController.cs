@@ -129,13 +129,25 @@ namespace WebBlog.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditUser(User user)
+        public IActionResult EditUser(int id, User user)
         {
             if (ModelState.IsValid)
             {
-                _db.Users.Update(user);
-                _db.SaveChanges();
-                return RedirectToAction("Admin");
+                var dbUser = _db.Users.Find(id);
+                if (dbUser != null)
+                {
+                    dbUser.FirstName = user.FirstName;
+                    dbUser.LastName = user.LastName;
+                    dbUser.Email = user.Email;
+
+                    _db.Users.Update(dbUser);
+                    _db.SaveChanges();
+                    return RedirectToAction("Admin");
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             return View(user);
         }
