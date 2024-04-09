@@ -4,17 +4,103 @@
     ViewData["Title"] = "BlogInspect";
 }
 
+<style>
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .user-blog {
+        margin-bottom: 50px;
+    }
+
+    .user-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .blog-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+        .blog-list li {
+            margin-bottom: 15px;
+        }
+
+            .blog-list li a {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 18px;
+                display: block;
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+            }
+
+                .blog-list li a:hover {
+                    background-color: #f5f5f5;
+                }
+
+    .blog-search-box {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+        .blog-search-box input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            background-color: #f5f5f5;
+        }
+
+    .search-button {
+        width: 20%;
+        padding: 10px;
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .blog-search-box input[type="text"]:focus {
+        outline: none;
+    }
+
+    .search-button:hover {
+        background-color: #3e8e41;
+    }
+</style>
+
 <h1>Global Blog Posts</h1>
+
+<div class="blog-search-box">
+    <form asp-action="BlogInspect" method="get">
+        <input type="text" name="searchQuery" placeholder="Search blogs...">
+        <button type="submit" class="search-button">Search</button>
+    </form>
+</div>
 
 @foreach (var user in Model)
 {
-    <h2>@user.FirstName @user.LastName's Blog</h2>
-    <ul>
-        @foreach (var post in user.BlogPosts)
-        {
-            <li>
-                <a href="@Url.Action("ViewBlogPost", "User", new { postId = post.Id })">@post.Title</a>
-            </li>
-        }
-    </ul>
+    <div class="user-blog">
+        <div class="user-name">@user.FirstName @user.LastName's Blog</div>
+        <ul class="blog-list">
+            @foreach (var post in user.BlogPosts)
+            {
+                <li>
+                    <a href="@Url.Action("ViewBlogPost", "User", new { postId = post.Id })">@post.Title</a>
+                </li>
+            }
+        </ul>
+    </div>
 }

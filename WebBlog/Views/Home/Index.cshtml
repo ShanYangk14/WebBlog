@@ -1,83 +1,75 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Three.js Example</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-        }
+   <style> 
+body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f0f0f0; color: #333; overflow-x: hidden; }
+#container { position: relative; width: 100%; height: calc(100vh - 200px); overflow: hidden; display: flex; justify-content: center; align-items: center; }
 
-        #container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: -1; /* Ensure the 3D model is behind other elements */
-        }
+#info { position: absolute; bottom: 10px; right: 10px; font-size: 12px; }
 
-        #info {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 12px;
-            z-index: 1; /* Ensure the info text is on top */
-        }
+.welcome-section { text-align: center; background-color: rgba(255, 255, 255, 0.8); padding: 20px; }
 
-        .welcome-section {
-            position: absolute;
-            top: 20%; /* Adjusted top position */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 1; /* Ensure the welcome text is on top */
-        }
+h1 { font-size: 3em; margin-bottom: 10px; color: #444; }
 
-        h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            color: #444;
-        }
+p { font-size: 1.2em; margin-bottom: 20px; color: #666; }
 
-        p {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #666;
-        }
+.introduction-section, .services-section { padding: 50px 0; }
 
-        a {
-            color: #2983ff;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
+.introduction-section { background-color: #fff; }
 
-            a:hover {
-                color: #007bff;
-            }
+.introduction-content { max-width: 600px; margin: 0 auto; }
+
+.services-section { background-color: #f9f9f9; }
+
+.service-item { text-align: center; margin-bottom: 30px; background-color: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+
+.service-item h3 { font-size: 1.5em; margin-bottom: 10px; color: #444; }
+
+.service-item p { font-size: 1.2em; color: #666; }
     </style>
 </head>
 <body>
-    <center>
-        <div class="welcome-section">
-            <h1 class="display-4">Welcome</h1>
-            <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-        </div>
-    </center>
+    <div class="welcome-section">
+        <h1>Welcome to Blog website</h1>
+    </div>
 
     <div id="container"></div>
 
+    <div class="container introduction-section">
+        <div class="introduction-content">
+            <h2>Introduction</h2>
+            <p>This is where you introduce who you are, what your skills are, and your strengths.</p>
+        </div>
+    </div>
+
+    <div class="container services-section">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="service-item">
+                    <h3>Service 1</h3>
+                    <p>Welcome to my personal blog, where I invite you to delve into the depths of my thoughts and experiences. Here, I aim to provide you with a glimpse into my world, sharing stories, insights, and reflections that may resonate with you on a personal level. Through this platform, I hope to connect with readers on a deeper level, fostering a sense of camaraderie and understanding.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-item">
+                    <h3>Service 2</h3>
+                    <p>In addition to sharing my own experiences, I'm also a firm believer in the importance of community and collaboration. That's why I encourage you not only to read but also to engage with the content by leaving comments, sharing your own perspectives, and joining the conversation. After all, a blog is not just a monologue; it's a dialogue—a dynamic exchange of ideas and insights that enriches both the writer and the reader.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-item">
+                    <h3>Service 3</h3>
+                    <p>Speaking of community, one of the core principles of this blog is to foster a friendly and inclusive environment. Toxic behavior has no place here. Instead, I envision this space as a sanctuary where everyone feels welcomed, respected, and valued. Whether you're a seasoned blogger or a newcomer, whether you agree or disagree with the content, I invite you to participate in constructive dialogue and cultivate a culture of mutual support and encouragement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="info">
-        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - animation - keyframes<br />
+        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - animation - keyframes<br>
         Model: <a href="https://artstation.com/artwork/1AGwX" target="_blank" rel="noopener">Littlest Tokyo</a> by
         <a href="https://artstation.com/glenatron" target="_blank" rel="noopener">Glen Fox</a>, CC Attribution.
     </div>
@@ -118,11 +110,11 @@
         const pmremGenerator = new THREE.PMREMGenerator(renderer);
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xbfe3dd);
+        scene.background = new THREE.Color(0xf0f0f0);
         scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
         const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
-        camera.position.set(5, 2, 8);
+        camera.position.set(5, 5, 10);
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.target.set(0, 0.5, 0);
@@ -138,8 +130,8 @@
         loader.load('models/gltf/LittlestTokyo.glb', function (gltf) {
 
             const model = gltf.scene;
-            model.position.set(0, 0, 0); 
-            model.scale.set(0.02, 0.02, 0.02); 
+            model.position.set(0, 1, 0);
+            model.scale.set(0.012, 0.012, 0.012);
             scene.add(model);
 
             mixer = new THREE.AnimationMixer(model);
@@ -165,7 +157,6 @@
 
 
         function animate() {
-
             requestAnimationFrame(animate);
 
             const delta = clock.getDelta();
@@ -175,9 +166,9 @@
             controls.update();
 
             stats.update();
+            stats.showPanel(0);
 
             renderer.render(scene, camera);
-
         }
     </script>
 </body>

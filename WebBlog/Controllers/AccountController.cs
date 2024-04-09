@@ -60,7 +60,7 @@ namespace WebBlog.Controllers
                 {
                     FirstName = _user.FirstName,
                     LastName = _user.LastName,
-                    UserName = _user.Email, // Set UserName to Email
+                    UserName = _user.Email, 
                     Email = _user.Email,
                     Password = _user.Password,
                     PasswordHash = _userManager.PasswordHasher.HashPassword(null, _user.Password),
@@ -132,7 +132,6 @@ namespace WebBlog.Controllers
                 new Claim(ClaimTypes.Name, user.Email),
             };
 
-                    // Check if the user is an admin
                     if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
                         claims.Add(new Claim(ClaimTypes.Role, "Admin"));

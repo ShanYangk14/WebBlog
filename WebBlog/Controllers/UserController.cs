@@ -22,7 +22,7 @@ namespace WebBlog.Controllers
         {
             var userEmail = User.Identity.Name;
             var user = _db.Users
-                .Include(u => u.BlogPosts) 
+                .Include(u => u.BlogPosts)
                     .ThenInclude(p => p.Comments)
                      .ThenInclude(c => c.User)
                 .FirstOrDefault(u => u.Email == userEmail);
@@ -62,7 +62,7 @@ namespace WebBlog.Controllers
         public IActionResult DeleteComment(int commentId)
         {
             var comment = _db.Comments
-                .Include(c => c.User) 
+                .Include(c => c.User)
                 .FirstOrDefault(c => c.Id == commentId);
 
             if (comment == null)
@@ -86,12 +86,29 @@ namespace WebBlog.Controllers
             return RedirectToAction("UserPage", "User");
         }
 
-
-        public IActionResult BlogInspect()
+        public IActionResult BlogInspect(string searchQuery)
         {
-            var otherBlog = _db.Users.Include(u => u.BlogPosts).ToList();
+            var currentUser = _db.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var otherBlog = _db.Users
+                .Include(u => u.BlogPosts)
+                .ToList();
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                otherBlog = otherBlog.Where(u => u.Id != currentUser.Id)
+                    .Select(u => new { User = u, BlogPosts = u.BlogPosts.Where(p => p.Title.Contains(searchQuery)) })
+                    .Where(x => x.BlogPosts.Any())
+                    .Select(x => x.User)
+                    .ToList();
+            }
+            else
+            {
+                otherBlog = otherBlog.Where(u => u.Id != currentUser.Id).ToList();
+            }
+
             return View(otherBlog);
         }
+
         public IActionResult ViewBlogPost(int postId)
         {
             var post = _db.BlogPosts
@@ -108,7 +125,7 @@ namespace WebBlog.Controllers
 
             if (user == null)
             {
-               
+
                 ViewData["UserNotFound"] = true;
             }
             else
