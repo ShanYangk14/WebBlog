@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: whitesmoke;
+            padding-bottom: 100px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        #contact {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section-header {
+            text-align: center;
+            padding: 40px 0;
+            font: 300 48px 'Oswald', sans-serif;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+        }
+
+        .contact-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 900px;
+        }
+
+        /* Left contact page */
+        .form-horizontal {
+            max-width: 400px;
+            font-weight: 400;
+        }
+
+        .form-control,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        .send-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .send-button:hover {
+                background-color: #0056b3;
+            }
+
+        /* Right contact page */
+        .direct-contact-container {
+            max-width: 400px;
+        }
+
+        .contact-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .list-item {
+            margin-bottom: 20px;
+        }
+
+        .contact-text {
+            font-size: 16px;
+            color: #666;
+        }
+
+            .contact-text a {
+                color: #007bff;
+                text-decoration: none;
+                transition: color 0.3s;
+            }
+
+                .contact-text a:hover {
+                    color: #0056b3;
+                }
+
+        .copyright {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        hr {
+            border-color: #ccc;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <section id="contact">
+
+        <h1 class="section-header">Contact</h1>
+
+        <div class="contact-wrapper">
+
+            <!-- Left contact page -->
+            <form id="contact-form" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" placeholder="Name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" placeholder="Email" name="email" required>
+                </div>
+
+                <textarea class="form-control" rows="6" placeholder="Message" name="message" required></textarea>
+
+                <button class="send-button" id="submit" type="submit" value="SEND">
+                    <span class="send-text">SEND</span>
+                </button>
+            </form>
+
+            <!-- Right contact page -->
+            <div class="direct-contact-container">
+                <ul class="contact-list">
+                    <li class="list-item"><i class="fa fa-map-marker fa-2x"></i> <span class="contact-text">Place: Tp.Ho Chi Minh</span></li>
+                    <li class="list-item"><i class="fa fa-phone fa-2x"></i> <span class="contact-text"><a href="tel:0945312007" title="Give me a call">Phone: 0945312007</a></span></li>
+                    <li class="list-item"><i class="fa fa-envelope fa-2x"></i> <span class="contact-text"><a href="mailto:duongvietmy2002@gmail.com" title="Send me an email">Email: duongvietmy2002@gmail.com</a></span></li>
+                </ul>
+                <hr>
+                <div class="copyright">&copy; All Rights Reserved</div>
+            </div>
+
+        </div>
+
+    </section>
+
+</body>
+</html>
+
