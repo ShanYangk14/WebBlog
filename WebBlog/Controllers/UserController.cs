@@ -86,6 +86,7 @@ namespace WebBlog.Controllers
             return RedirectToAction("UserPage", "User");
         }
 
+
         public IActionResult BlogInspect(string searchQuery)
         {
             var currentUser = _db.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
@@ -95,11 +96,9 @@ namespace WebBlog.Controllers
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                otherBlog = otherBlog.Where(u => u.Id != currentUser.Id)
-                    .Select(u => new { User = u, BlogPosts = u.BlogPosts.Where(p => p.Title.Contains(searchQuery)) })
-                    .Where(x => x.BlogPosts.Any())
-                    .Select(x => x.User)
-                    .ToList();
+                otherBlog = otherBlog.Where(u => u.Id != currentUser.Id &&
+                                                  u.FirstName + " " + u.LastName == searchQuery)
+                                     .ToList();
             }
             else
             {
@@ -108,6 +107,8 @@ namespace WebBlog.Controllers
 
             return View(otherBlog);
         }
+
+
 
         public IActionResult ViewBlogPost(int postId)
         {

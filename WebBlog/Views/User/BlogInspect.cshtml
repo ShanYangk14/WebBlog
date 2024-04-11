@@ -5,9 +5,21 @@
 }
 
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
     h1 {
         text-align: center;
         margin-bottom: 30px;
+        color: #333;
     }
 
     .user-blog {
@@ -18,6 +30,7 @@
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 10px;
+        color: darkblue;
     }
 
     .blog-list {
@@ -46,61 +59,54 @@
         display: flex;
         justify-content: center;
         margin-bottom: 30px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        overflow: hidden;
-        width: 50%;
-        margin-left: auto;
-        margin-right: auto;
     }
 
         .blog-search-box input[type="text"] {
-            width: 80%;
+            width: 60%;
             padding: 10px;
-            font-size: 18px;
-            border: none;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 5px 0 0 5px;
             background-color: #f5f5f5;
         }
 
     .search-button {
-        width: 20%;
-        padding: 10px;
-        font-size: 18px;
-        background-color: #4CAF50;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: greenyellow;
         color: white;
         border: none;
+        border-radius: 0 5px 5px 0;
         cursor: pointer;
     }
 
-    .blog-search-box input[type="text"]:focus {
-        outline: none;
-    }
-
-    .search-button:hover {
-        background-color: #3e8e41;
-    }
+        .search-button:hover {
+            background-color: forestgreen;
+        }
 </style>
 
-<h1>Global Blog Posts</h1>
+<div class="container">
+    <h1>Global Blog Posts</h1>
 
-<div class="blog-search-box">
-    <form asp-action="BlogInspect" method="get">
-        <input type="text" name="searchQuery" placeholder="Search blogs...">
-        <button type="submit" class="search-button">Search</button>
-    </form>
-</div>
-
-@foreach (var user in Model)
-{
-    <div class="user-blog">
-        <div class="user-name">@user.FirstName @user.LastName's Blog</div>
-        <ul class="blog-list">
-            @foreach (var post in user.BlogPosts)
-            {
-                <li>
-                    <a href="@Url.Action("ViewBlogPost", "User", new { postId = post.Id })">@post.Title</a>
-                </li>
-            }
-        </ul>
+    <div class="blog-search-box">
+        <form asp-action="BlogInspect" method="get">
+            <input type="text" name="searchQuery" placeholder="Search blogs...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
     </div>
-}
+
+    @foreach (var user in Model)
+    {
+        <div class="user-blog">
+            <div class="user-name">@user.FirstName @user.LastName's Blog</div>
+            <ul class="blog-list">
+                @foreach (var post in user.BlogPosts)
+                {
+                    <li>
+                        <a href="@Url.Action("ViewBlogPost", "User", new { postId = post.Id })">@post.Title</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

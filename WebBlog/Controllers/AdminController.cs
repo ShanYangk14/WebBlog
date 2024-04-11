@@ -8,6 +8,7 @@ using System;
 using System.Security.Claims;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace WebBlog.Controllers
 {
@@ -15,10 +16,12 @@ namespace WebBlog.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(ApplicationDbContext db)
+        public AdminController(ApplicationDbContext db, ILogger<AdminController> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public IActionResult Admin()
@@ -125,32 +128,34 @@ namespace WebBlog.Controllers
         public IActionResult EditUser(int id)
         {
             var user = _db.Users.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
             return View(user);
         }
 
         [HttpPost]
-        public IActionResult EditUser(int id, User user)
+        public IActionResult EditUser(User editedUser)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var dbUser = _db.Users.Find(id);
-                if (dbUser != null)
-                {
-                    dbUser.FirstName = user.FirstName;
-                    dbUser.LastName = user.LastName;
-                    dbUser.Email = user.Email;
-
-                    _db.Users.Update(dbUser);
-                    _db.SaveChanges();
-                    return RedirectToAction("Admin");
-                }
-                else
+                var existingUser = _db.Users.Find(editedUser.Id);
+                if (existingUser == null)
                 {
                     return NotFound();
                 }
+
+                existingUser.FirstName = editedUser.FirstName;
+                existingUser.LastName = editedUser.LastName;
+                existingUser.Email = editedUser.Email;
+
+                _db.SaveChanges(); 
+                return RedirectToAction("Admin");
             }
-            return View(user);
+            return View(editedUser);
         }
+
 
         public IActionResult DeleteUser(int id)
         {
