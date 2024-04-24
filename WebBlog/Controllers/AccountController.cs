@@ -27,14 +27,33 @@ namespace WebBlog.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly EmailService _mailService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<AccountController> logger, ApplicationDbContext db, RoleManager<IdentityRole<int>> roleManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<AccountController> logger, ApplicationDbContext db, RoleManager<IdentityRole<int>> roleManager, EmailService mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _db = db;
             _roleManager = roleManager;
+            _mailService = mailService;
+        }
+
+        public IActionResult SendEmail()
+        {
+            var response = _mailService.SendSimpleMessage("duongvietmy2002@gmail.com", "Hello", "Testing Mailgun awesomeness!");
+
+            // Handle the response as needed
+            if (response.IsSuccessful)
+            {
+                // Email sent successfully
+                return Content("Email sent successfully!");
+            }
+            else
+            {
+                // Email sending failed
+                return Content("Failed to send email. Error: " + response.ErrorMessage);
+            }
         }
 
         public IActionResult Register()

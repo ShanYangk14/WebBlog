@@ -61,6 +61,8 @@ namespace WebBlog
                     options.SlidingExpiration = true;
                 });
 
+            services.AddScoped<EmailService>();
+
             services.AddControllersWithViews();
         }
 
